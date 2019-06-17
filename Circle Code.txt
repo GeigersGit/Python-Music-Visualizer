@@ -1,0 +1,32 @@
+import bpy
+
+for i in range(0, 60):
+    #Add a plane and set it's origin to one of its edges
+    bpy.ops.mesh.primitive_plane_add(location = (0, 0, 0))
+    bpy.context.scene.cursor_location = bpy.context.active_object.location
+    bpy.context.scene.cursor_location.y -= 1
+    bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+    
+    #Scale the plane on the x and y axis, then apply the transformation
+    bpy.context.active_object.scale.x = 0.5
+    bpy.context.active_object.scale.y = 10
+    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    
+    #Insert a scaling keyframe and lock the x and z axis
+    bpy.ops.anim.keyframe_insert_menu(type='Scaling')
+    bpy.context.active_object.animation_data.action.fcurves[0].lock = True
+    bpy.context.active_object.animation_data.action.fcurves[2].lock = True
+    
+    bpy.context.area.type = 'GRAPH_EDITOR'
+    
+    #Frequency range of the bars
+    l = i**2 + 20
+    h = (i+1)**2 + 20
+    
+    print(str(i) + ' ' + str(l) + ' ' + str(h))
+    
+    #Bake
+    bpy.ops.graph.sound_bake(filepath=r'C:\Users\Brian\Desktop\BulletTrain.mp3', low = (l), high = (h))
+    
+    #Lock y axis
+    bpy.context.active_object.animation_data.action.fcurves[1].lock = True
